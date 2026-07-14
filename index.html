@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Book a trip with Herjólfur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="improved-styles.css">
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="clone-context" aria-labelledby="page-title">
+        <p class="eyebrow">Herjólfur</p>
+        <h1 id="page-title">Travel to Vestmanna&shy;eyjar</h1>
+        <p>Choose your dates, passengers and vehicle to see available sailings.</p>
+        <div class="language-switch" data-i18n-aria="language" aria-label="Language">
+          <button type="button" data-language="is">IS</button>
+          <button type="button" data-language="en" class="is-active">EN</button>
+        </div>
+      </section>
+
+      <section class="booking-column" aria-labelledby="booking-title">
+        <h2 id="booking-title">Search trips</h2>
+
+        <div class="react-tabs" data-tabs="true">
+          <ul class="react-tabs__tab-list" role="tablist" data-i18n-aria="tripType" aria-label="Trip type">
+            <li
+              class="react-tabs__tab react-tabs__tab--selected"
+              role="tab"
+              id="tab-both-ways"
+              aria-selected="true"
+              aria-controls="panel-both-ways"
+              tabindex="0"
+              data-trip-mode="return"
+            >
+              Both ways
+            </li>
+            <li
+              class="react-tabs__tab"
+              role="tab"
+              id="tab-one-way"
+              aria-selected="false"
+              aria-controls="panel-both-ways"
+              tabindex="-1"
+              data-trip-mode="one-way"
+            >
+              One way
+            </li>
+          </ul>
+
+          <div
+            class="react-tabs__tab-panel react-tabs__tab-panel--selected"
+            role="tabpanel"
+            id="panel-both-ways"
+            aria-labelledby="tab-both-ways"
+          >
+            <form class="booking-form" data-booking-form>
+              <div class="row trip-row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <span class="form-label" data-i18n="trip1">Trip 1</span>
+                    <div class="form-control trip-display" id="trip-1-display">
+                      <span class="ship-icon" aria-hidden="true"></span>
+                      <span class="trip-select__label" data-route-label>
+                        <span class="origin">Landeyjahöfn</span>
+                        <span class="arrow-icon" aria-hidden="true"></span>
+                        <span class="destination">Vestmannaeyjar</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-sm-6 return-only">
+                  <div class="form-group">
+                    <span class="form-label" data-i18n="trip2">Trip 2</span>
+                    <div class="form-control trip-display" id="trip-2-display">
+                      <span class="ship-icon" aria-hidden="true"></span>
+                      <span class="trip-select__label" data-route-label>
+                        <span class="origin">Vestmannaeyjar</span>
+                        <span class="arrow-icon" aria-hidden="true"></span>
+                        <span class="destination">Landeyjahöfn</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button" class="swap-trips-btn" data-i18n-aria="swapDirections" aria-label="Swap directions">
+                  <span aria-hidden="true">⇄</span>
+                </button>
+              </div>
+
+              <div class="row date-row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="from-date-trigger" class="form-label">Departure</label>
+                    <button
+                      type="button"
+                      id="from-date-trigger"
+                      class="date-picker date-trigger"
+                      data-date-trigger="from"
+                      aria-haspopup="dialog"
+                      aria-expanded="false"
+                    >
+                      <span data-date-value="from">07/11/2026</span>
+                    </button>
+                    <input type="hidden" id="from-date" name="fromDate" value="2026-07-11">
+                    <span class="field-icon calendar-icon" aria-hidden="true"></span>
+                  </div>
+                </div>
+
+                <div class="col-sm-6 return-only">
+                  <div class="form-group">
+                    <label for="to-date-trigger" class="form-label">Return</label>
+                    <button
+                      type="button"
+                      id="to-date-trigger"
+                      class="date-picker date-trigger"
+                      data-date-trigger="to"
+                      aria-haspopup="dialog"
+                      aria-expanded="false"
+                    >
+                      <span data-date-value="to">07/11/2026</span>
+                    </button>
+                    <input type="hidden" id="to-date" name="toDate" value="2026-07-11">
+                    <span class="field-icon calendar-icon" aria-hidden="true"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="booking-actions">
+                <button class="btn btn--primary" type="submit" data-i18n="searchDepartures">Search departures</button>
+              </div>
+              <p class="booking-result" data-booking-result aria-live="polite"></p>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="checkout-flow" data-checkout-flow aria-labelledby="checkout-title" hidden>
+        <!-- Mobile-only fixed frame: context bar + progress strip. display: none outside ≤620px. -->
+        <div class="checkout-topbar" data-checkout-topbar>
+          <button type="button" class="topbar-context" data-topbar-edit aria-expanded="false">
+            <span class="topbar-route" data-topbar-route>Landeyjahöfn ⇄ Vestmannaeyjar</span>
+            <span class="topbar-dates" data-topbar-dates></span>
+            <span class="topbar-edit" data-topbar-edit-label>Edit search</span>
+          </button>
+          <div class="topbar-progress">
+            <button type="button" class="topbar-back" data-topbar-back data-i18n-aria="back" aria-label="Back">
+              <span aria-hidden="true">‹</span>
+            </button>
+            <div class="topbar-segments" data-topbar-segments></div>
+            <span class="topbar-steplabel" data-topbar-steplabel aria-live="polite"></span>
+          </div>
+        </div>
+
+        <div class="flow-header">
+          <div>
+            <p class="eyebrow">Secure booking</p>
+            <h2 id="checkout-title">Complete your booking</h2>
+          </div>
+        </div>
+
+        <ol class="checkout-stepper" data-i18n-aria="bookingProgress" aria-label="Booking progress">
+          <li>
+            <button type="button" data-step-target="passengers" class="is-active">
+              <span>1</span>
+              Farþegar
+            </button>
+          </li>
+          <li>
+            <button type="button" data-step-target="vehicles">
+              <span>2</span>
+              Farartæki
+            </button>
+          </li>
+          <li>
+            <button type="button" data-step-target="trips">
+              <span>3</span>
+              Ferðir
+            </button>
+          </li>
+          <li>
+            <button type="button" data-step-target="information">
+              <span>4</span>
+              Upplýsingar
+            </button>
+          </li>
+          <li>
+            <button type="button" data-step-target="payment">
+              <span>5</span>
+              Ganga frá bókun
+            </button>
+          </li>
+        </ol>
+
+        <div class="checkout-layout">
+          <div class="checkout-main">
+            <article class="checkout-panel is-active" data-step-panel="passengers">
+              <div class="flow-actions">
+                <button class="btn btn--secondary" type="button" data-search-back>Til baka</button>
+                <button class="btn btn--primary" type="button" data-flow-go="vehicles" data-passenger-next>Áfram</button>
+              </div>
+
+              <div class="panel-card">
+                <h3>Farþegar</h3>
+
+                <div class="counter-list">
+                  <div class="counter-row">
+                    <label for="adult-count">Fullorðinn <strong>2.700 kr.</strong></label>
+                    <div class="stepper-control" data-counter="adult">
+                      <button type="button" data-counter-action="decrement" aria-label="Remove adult">-</button>
+                      <input id="adult-count" type="text" readonly value="1">
+                      <button type="button" data-counter-action="increment" aria-label="Add adult">+</button>
+                    </div>
+                  </div>
+                  <div class="counter-row">
+                    <label for="teen-senior-count">Unglingar 12-15 ára, eldri borgarar <strong>1.350 kr.</strong></label>
+                    <div class="stepper-control" data-counter="teenSenior">
+                      <button type="button" data-counter-action="decrement" aria-label="Remove teen or senior">-</button>
+                      <input id="teen-senior-count" type="text" readonly value="0">
+                      <button type="button" data-counter-action="increment" aria-label="Add teen or senior">+</button>
+                    </div>
+                  </div>
+                  <div class="counter-row">
+                    <label for="child-count">Börn yngri en 12 ára <strong>0 kr.</strong></label>
+                    <div class="stepper-control" data-counter="child">
+                      <button type="button" data-counter-action="decrement" aria-label="Remove child">-</button>
+                      <input id="child-count" type="text" readonly value="0">
+                      <button type="button" data-counter-action="increment" aria-label="Add child">+</button>
+                    </div>
+                  </div>
+                </div>
+
+                <label class="check-row" data-different-return-row hidden>
+                  <input type="checkbox" data-different-return>
+                  <span data-i18n="differentReturnCount">Annar fjöldi farþega á heimleið</span>
+                </label>
+
+                <div class="passenger-leg" data-return-counters hidden>
+                  <h4 class="passenger-leg__title" data-return-passengers-title>Ferð 2</h4>
+                  <div class="counter-list">
+                    <div class="counter-row">
+                      <label for="return-adult-count">Fullorðinn <strong>2.700 kr.</strong></label>
+                      <div class="stepper-control" data-return-counter="adult">
+                        <button type="button" data-counter-action="decrement" aria-label="Remove adult">-</button>
+                        <input id="return-adult-count" type="text" readonly value="1">
+                        <button type="button" data-counter-action="increment" aria-label="Add adult">+</button>
+                      </div>
+                    </div>
+                    <div class="counter-row">
+                      <label for="return-teen-senior-count">Unglingar 12-15 ára, eldri borgarar <strong>1.350 kr.</strong></label>
+                      <div class="stepper-control" data-return-counter="teenSenior">
+                        <button type="button" data-counter-action="decrement" aria-label="Remove teen or senior">-</button>
+                        <input id="return-teen-senior-count" type="text" readonly value="0">
+                        <button type="button" data-counter-action="increment" aria-label="Add teen or senior">+</button>
+                      </div>
+                    </div>
+                    <div class="counter-row">
+                      <label for="return-child-count">Börn yngri en 12 ára <strong>0 kr.</strong></label>
+                      <div class="stepper-control" data-return-counter="child">
+                        <button type="button" data-counter-action="decrement" aria-label="Remove child">-</button>
+                        <input id="return-child-count" type="text" readonly value="0">
+                        <button type="button" data-counter-action="increment" aria-label="Add child">+</button>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="subtle-copy" data-roster-hint></p>
+                </div>
+              </div>
+            </article>
+
+            <article class="checkout-panel" data-step-panel="vehicles" hidden>
+              <div class="flow-actions">
+                <button class="btn btn--secondary" type="button" data-flow-go="passengers">Til baka</button>
+                <button class="btn btn--primary" type="button" data-flow-go="trips">Áfram</button>
+              </div>
+
+              <div class="panel-card">
+                <h3>Farartæki</h3>
+                <p class="subtle-copy">Choose whether this booking includes vehicle capacity.</p>
+
+                <div class="vehicle-branch">
+                  <button class="vehicle-branch__option is-active" type="button" data-vehicle-mode="none">
+                    <strong>Continue without vehicle</strong>
+                    <span>Passenger-only booking.</span>
+                  </button>
+                  <button class="vehicle-branch__option" type="button" data-vehicle-mode="vehicle">
+                    <strong>Bæta við farartæki</strong>
+                    <span>Add a car, bicycle, or motorcycle.</span>
+                  </button>
+                </div>
+
+                <div data-vehicle-list></div>
+
+                <button class="link-button" type="button" data-add-vehicle hidden>Bæta við öðru farartæki</button>
+              </div>
+            </article>
+
+            <article class="checkout-panel" hidden data-step-panel="trips">
+              <div class="flow-actions">
+                <button class="btn btn--secondary" type="button" data-flow-go="vehicles">Til baka</button>
+                <button class="btn btn--primary" type="button" id="lock-inventory-btn">Áfram</button>
+              </div>
+
+              <p class="subtle-copy" data-lock-hint></p>
+
+              <div class="panel-card">
+                <div class="panel-title-row">
+                  <h3 data-i18n="trip1">Ferð 1</h3>
+                </div>
+
+                <div class="sailing-list" data-sailing-group="outbound"></div>
+              </div>
+
+              <div class="panel-card return-only-flow">
+                <div class="panel-title-row">
+                  <h3 data-i18n="trip2">Ferð 2</h3>
+                </div>
+
+                <div class="sailing-list" data-sailing-group="return"></div>
+              </div>
+            </article>
+
+            <article class="checkout-panel" data-step-panel="information" hidden>
+              <div class="flow-actions">
+                <button class="btn btn--secondary" type="button" data-flow-go="trips">Til baka</button>
+                <button class="btn btn--primary" type="button" data-flow-go="payment">Áfram</button>
+              </div>
+
+              <div class="info-callout" data-login-container>
+                <h3 data-i18n="loginTitle">Skráðu þig inn á mínar síður</h3>
+                <p data-i18n="loginCopy">Vissirðu að þú getur skráð ferðafélaga, breytt bókunum, og náð í brottfararspjald á mínum síðum.</p>
+                <button class="btn btn--secondary" type="button" data-login-btn data-i18n="signIn">Skrá inn</button>
+              </div>
+
+              <div class="panel-card">
+                <h3>Upplýsingar</h3>
+                <p class="subtle-copy" data-i18n="informationSubcopy">Passenger detail fields are generated from the booking service labels.</p>
+
+                <div data-passenger-details-container>
+                  <!-- Dynamically generated passenger detail cards will be injected here -->
+                </div>
+              </div>
+
+              <div class="panel-card" data-vehicle-info-card hidden>
+                <h3 data-i18n="vehicleInfoTitle">Upplýsingar um farartæki</h3>
+                <div class="field-grid" data-plate-fields></div>
+                <p class="field-error" data-plate-error role="alert" hidden></p>
+              </div>
+            </article>
+
+            <article class="checkout-panel" data-step-panel="payment" hidden>
+              <div class="flow-actions">
+                <button class="btn btn--secondary" type="button" data-flow-go="information">Til baka</button>
+                <button class="btn btn--primary" type="button" data-payment-submit>Staðfesta bókun</button>
+              </div>
+
+              <div class="panel-card order-review-card" data-order-review-card style="border-color: var(--green); background: rgba(23, 115, 92, 0.02);">
+                <h3 data-i18n="orderReviewTitle" style="color: var(--green);">Bókunaryfirlit</h3>
+                <div data-review-details></div>
+              </div>
+
+              <div class="panel-card">
+                <h3>Tengiliðaupplýsingar</h3>
+                <div class="field-grid">
+                  <label>
+                    <span>Netfang</span>
+                    <input type="email" name="email" autocomplete="email" spellcheck="false" required placeholder="name@example.com">
+                  </label>
+                  <label>
+                    <span>Símanúmer</span>
+                    <input type="tel" name="phone" autocomplete="tel" required placeholder="481 2800">
+                  </label>
+                </div>
+              </div>
+
+              <div class="panel-card">
+                <h3>Kortaupplýsingar</h3>
+                <div class="field-grid">
+                  <label>
+                    <span>Kortanúmer</span>
+                    <input type="text" name="cardNumber" autocomplete="cc-number" inputmode="numeric" required minlength="15" maxlength="19" placeholder="0000 0000 0000 0000">
+                  </label>
+                  <label>
+                    <span>MM/YY</span>
+                    <input type="text" name="cardExpiry" autocomplete="cc-exp" inputmode="numeric" required maxlength="5" placeholder="MM/YY">
+                  </label>
+                  <label>
+                    <span>Nafn</span>
+                    <input type="text" name="cardName" autocomplete="cc-name" required placeholder="Name on card">
+                  </label>
+                  <label>
+                    <span>CVV/CCV</span>
+                    <input type="text" name="cardCvc" autocomplete="cc-csc" inputmode="numeric" required minlength="3" maxlength="4" placeholder="123">
+                  </label>
+                </div>
+
+                <label class="check-row">
+                  <input type="checkbox" name="termsAccepted" required>
+                  <span>Ég samþykki skilmála Herjólfs ohf. og að hafa kynnt mér persónuverndarstefnu félagsins.</span>
+                </label>
+                <label class="check-row">
+                  <input type="checkbox">
+                  <span>Bæta mér við á póstlista</span>
+                </label>
+              </div>
+
+              <div class="flow-actions flow-actions--footer">
+                <button class="btn btn--primary" type="button" data-payment-submit>Staðfesta bókun</button>
+              </div>
+            </article>
+
+            <article class="checkout-panel" data-step-panel="success" hidden>
+              <div class="panel-card success-card">
+                <p class="panel-kicker">Bókun HRJ-2048</p>
+                <h3>Kærar þakkir fyrir pöntunina þína!</h3>
+                <p data-success-email>Staðfesting hefur verið send á netfangið sem var gefið upp.</p>
+
+                <div class="review-body" data-success-recap></div>
+                <p>Ef þú hefur einhverjar spurningar ekki hika við að hafa samband við okkur í síma 481 - 2800 eða á netfangið herjolfur@herjolfur.is.</p>
+                <button class="btn btn--secondary" type="button" data-flow-go="passengers">Bóka nýja ferð</button>
+              </div>
+            </article>
+          </div>
+
+          <div class="summary-scrim" data-summary-scrim hidden></div>
+          <aside class="booking-summary" aria-labelledby="summary-title">
+            <div class="sheet-handle" aria-hidden="true"></div>
+            <h3 id="summary-title">Bókunin þín</h3>
+            <dl>
+              <div>
+                <dt>Route</dt>
+                <dd data-summary-route>Landeyjahöfn to Vestmannaeyjar</dd>
+              </div>
+              <div>
+                <dt>Farþegar</dt>
+                <dd data-summary-passengers>0 selected</dd>
+              </div>
+              <div>
+                <dt>Farartæki</dt>
+                <dd data-summary-vehicle>No vehicle</dd>
+              </div>
+              <div>
+                <dt>Ferðir</dt>
+                <dd data-summary-sailings>08:15 outbound, 17:00 return</dd>
+              </div>
+            </dl>
+            <p class="summary-total">
+              <span>Samtals</span>
+              <strong data-summary-total>0 kr.</strong>
+            </p>
+            <small class="fare-version" data-fare-version></small>
+          </aside>
+        </div>
+
+        <!-- Mobile-only fixed commit bar: live total, lock countdown, primary action. -->
+        <div class="checkout-commitbar" data-checkout-commitbar>
+          <button type="button" class="commit-summary" data-commit-summary-toggle aria-expanded="false" data-i18n-aria="summaryTitle" aria-label="Your booking">
+            <small data-i18n="total">Total</small>
+            <strong><span data-commit-total>0 kr.</span><span class="commit-chevron" aria-hidden="true"> ▴</span></strong>
+          </button>
+          <span class="commit-lock" data-commit-lock hidden></span>
+          <button type="button" class="btn btn--primary commit-action" data-commit-action>Continue</button>
+        </div>
+      </section>
+      <footer class="page-footer">
+        <label class="testing-switch">
+          <input type="checkbox" data-testing-mode role="switch">
+          <span data-i18n="testingMode">Prófunarhamur — sleppa nauðsynlegum reitum</span>
+        </label>
+        <small class="testing-switch__hint" data-testing-mode-hint hidden></small>
+        <p class="demo-notice">Concept demo — not an official Herjólfur booking service.</p>
+      </footer>
+    </main>
+
+    <div class="calendar-popover" data-calendar hidden role="dialog" aria-label="Calendar">
+      <div class="calendar-popover__header">
+        <button type="button" data-calendar-prev aria-label="Previous month">‹</button>
+        <strong data-calendar-title>July 2026</strong>
+        <button type="button" data-calendar-next aria-label="Next month">›</button>
+      </div>
+      <div class="calendar-popover__weekdays" data-calendar-weekdays aria-hidden="true"></div>
+      <div class="calendar-popover__grid" data-calendar-grid></div>
+    </div>
+
+    <script src="mock-availability.js"></script>
+    <script src="fare-catalog.js"></script>
+    <script src="improved-script.js"></script>
+  </body>
+</html>
