@@ -15,6 +15,8 @@ The baseline journey exposed four connected problems:
 3. **The final commitment was opaque.** People could reach payment without a trustworthy, itemised review of their actual trip.
 4. **State had no explicit ownership.** Route, dates, capacity, selected sailings, and identity data were treated as form fields rather than dependencies.
 
+The availability ordering produces **booking-form stress**. When a person must supply passenger, vehicle, and administrative information before learning whether a suitable sailing exists, each field becomes a sunk cost. The prospect of an unavailable result—or of losing that effort while going back—accumulates anxiety precisely when the system should be helping them decide.
+
 These are not cosmetic defects. They are a logic problem: some values stay valid after an upstream edit, while others do not.
 
 ## Change the domain before styling the interface
@@ -62,6 +64,17 @@ flowchart LR
 ```
 
 The dotted paths are guarded regressions. They release inventory, never identity data.
+
+## Where the ferry operator’s systems enter
+
+The **Select sailings** step is the boundary between this interaction model and the operator’s authoritative systems. In production, the client cannot decide availability or create a reservation by itself.
+
+1. After route, dates, passenger counts, and vehicle constraints are known, the client requests eligible sailings from the ferry company’s availability and capacity services.
+2. When the traveller confirms specific sailings, the backend creates the timed hold and returns an authoritative hold identifier and expiry.
+3. The client displays that expiry and keeps collecting traveller details, but the backend remains the source of truth for capacity, concurrent bookings, hold expiry, and payment confirmation.
+4. On an upstream edit, the client asks the backend to release the hold, clears its local inventory state, and queries availability again.
+
+This demo simulates those responses locally so that the state transitions can be inspected. Its timer is therefore illustrative, not a reservation. A production implementation must make the availability query, hold, release, and final booking transaction server-side and auditable.
 
 ## What the demo proves
 
