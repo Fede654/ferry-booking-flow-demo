@@ -299,7 +299,10 @@ h1 {
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
 }
 
@@ -480,7 +483,11 @@ h1 {
   text-align: left;
   cursor: pointer;
   border-radius: 8px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .checkout-stepper button span {
@@ -516,8 +523,8 @@ h1 {
 
 .checkout-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 330px;
-  gap: 28px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+  gap: 32px;
   align-items: start;
 }
 
@@ -527,7 +534,8 @@ h1 {
 
 .checkout-panel {
   display: grid;
-  gap: 18px;
+  gap: 24px;
+  align-content: start;
 }
 
 .panel-card,
@@ -1110,18 +1118,28 @@ h1 {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  margin-bottom: 22px;
+  margin: 0;
   border-bottom: 1px solid rgba(45, 45, 45, 0.08);
-  padding-bottom: 16px;
+  padding: 0 2px 16px;
 }
 
 /* Repeat of the top action, so the user need not scroll back up to confirm. */
 .flow-actions--footer {
   justify-content: flex-end;
-  margin: 22px 0 0;
+  margin: 0;
   padding: 16px 0 0;
   border-top: 1px solid rgba(45, 45, 45, 0.08);
   border-bottom: 0;
+}
+
+.checkout-context {
+  margin: 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--brand);
+  background: var(--ocean);
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
 }
 
 .vehicle-card + .vehicle-card {
@@ -1351,7 +1369,7 @@ h2 {
   text-transform: uppercase;
 }
 
-.booking-column, .checkout-main, .booking-summary, .panel-card, .calendar-popover {
+.booking-column, .booking-summary, .panel-card, .calendar-popover {
   background: var(--paper) !important;
   border: 1px solid var(--line) !important;
   box-shadow: var(--shadow) !important;
