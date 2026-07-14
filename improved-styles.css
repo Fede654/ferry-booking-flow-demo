@@ -826,9 +826,10 @@ h1 {
   /* .page-shell is a two-column grid; span it rather than taking a column. */
   grid-column: 1 / -1;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: flex-start;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
   margin-top: 8px;
   padding-top: 20px;
   border-top: 1px dashed var(--line);
@@ -864,10 +865,37 @@ h1 {
 }
 
 .demo-notice {
-  margin: 10px 0 0;
+  margin: 0;
   color: var(--muted);
   font-size: 0.82rem;
   line-height: 1.45;
+}
+
+.footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.repo-link {
+  color: var(--brand-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 38%, transparent);
+  text-underline-offset: 3px;
+}
+
+.repo-link:hover {
+  color: var(--brand);
+}
+
+.repo-link:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--focus) 35%, transparent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 .passenger-leg {
@@ -1264,6 +1292,16 @@ h1 {
   .booking-summary {
     position: static;
   }
+
+  .page-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-meta {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 620px) {
@@ -1308,6 +1346,12 @@ h1 {
   .swap-button {
     position: static;
     margin-bottom: 14px;
+  }
+
+  .footer-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
   }
 }
 

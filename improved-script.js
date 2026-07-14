@@ -69,7 +69,6 @@ const copy = {
     motorcycle: "Motorcycle",
     length: "Length:",
     lengthTrailer: "Length w/trailer:",
-    plate: "Registration plate",
     trailerCheck: "I have a trailer attached to the car (trailer, caravan, etc.)",
     highVehicleCheck: "The car and/or trailer is higher than 2.10 m",
     departureTime: "Departure time",
@@ -114,7 +113,6 @@ const copy = {
     outbound: "outbound",
     returnTrip: "return",
     to: "to",
-    plateSummary: "plate",
     trailerSummary: "trailer",
     highVehicleSummary: "higher than 2.10 m",
     dateError: "Return date cannot be before departure date.",
@@ -152,9 +150,6 @@ const copy = {
     sailingsReleased: "Your search changed, so the held sailings were released. Choose your departures again.",
     selectRequired: "Select an available sailing for each leg.",
     fareVersion: "Base fares · schedule {version}",
-    vehicleInfoTitle: "Vehicle information",
-    required: "Required",
-    plateRequiredError: "Enter the registration plate of the vehicle you are bringing on board.",
     orderReviewTitle: "Booking overview",
     date: "Date",
     sailing: "Sailing",
@@ -225,7 +220,6 @@ const copy = {
     motorcycle: "Mótorhjól",
     length: "Lengd:",
     lengthTrailer: "Lengd m/vagn:",
-    plate: "Númeraplata",
     trailerCheck: "Ég er með tengivagn aftan í bílnum (Fellihýsi, kerra, osfrv.)",
     highVehicleCheck: "Bílinn og/eða tengivagninn er hærri en 2,10 m",
     departureTime: "Brottfarartími",
@@ -270,7 +264,6 @@ const copy = {
     outbound: "brottför",
     returnTrip: "heimkoma",
     to: "til",
-    plateSummary: "númeraplata",
     trailerSummary: "tengivagn",
     highVehicleSummary: "hærri en 2,10 m",
     dateError: "Heimkoma má ekki vera fyrir brottför.",
@@ -308,9 +301,6 @@ const copy = {
     sailingsReleased: "Leitinni var breytt og frátekin pláss losnuðu. Veldu ferðir aftur.",
     selectRequired: "Veldu lausa ferð fyrir hvora leið.",
     fareVersion: "Grunnverð · verðskrá {version}",
-    vehicleInfoTitle: "Upplýsingar um farartæki",
-    required: "Nauðsynlegt",
-    plateRequiredError: "Sláðu inn númeraplötu farartækisins sem þú tekur með um borð.",
     orderReviewTitle: "Bókunaryfirlit",
     date: "Dagsetning",
     sailing: "Ferð",
@@ -776,7 +766,6 @@ function newVehicle() {
     trailer: false,
     trailerLength: "5 - 10m m/vagn",
     highVehicle: false,
-    plate: "",
   };
 }
 
@@ -802,7 +791,6 @@ function vehicleLabel(vehicle) {
 
 function singleVehicleSummary(vehicle) {
   const details = [vehicleLabel(vehicle)];
-  if (vehicle.plate) details.push(`${t("plateSummary")} ${vehicle.plate}`);
   if (vehicle.trailer) details.push(t("trailerSummary"));
   if (vehicle.highVehicle) details.push(t("highVehicleSummary"));
   return details.join(", ");
@@ -945,7 +933,6 @@ function renderVehicleCards() {
       input.addEventListener("change", () => {
         const field = input.dataset.vehicleField;
         vehicle[field] = input.type === "checkbox" ? input.checked : input.value;
-        // A bicycle or motorcycle carries no plate, so drop a stale one.
         if (field === "type" && vehicle.type !== "Bíll") vehicle.trailer = false;
         updateVehicleBranch();
       });
@@ -974,7 +961,6 @@ function updateVehicleBranch() {
   });
 
   renderVehicleCards();
-  syncVehicleInfoCard();
   updateFlowSummary();
   if (!checkoutFlow.hidden) renderAvailability();
 }
@@ -1170,7 +1156,6 @@ function applyLanguage() {
   if (document.querySelector("[data-passenger-details-container]")?.children.length) {
     renderPassengerDetailFields();
   }
-  syncVehicleInfoCard();
   setText("[data-step-panel='information'] .link-button", "addPassenger");
   setText("[data-step-panel='information'] [data-flow-go='trips']", "back");
   setText("[data-step-panel='information'] [data-flow-go='payment']", "continue");
@@ -1226,71 +1211,10 @@ function applyLanguage() {
   renderCalendar();
 }
 
-// A bicycle carries no plate; cars and motorcycles must be registered before boarding.
-function plateIsRequired(vehicle) {
-  return vehicle.type !== "Reiðhjól";
-}
-
-function syncVehicleInfoCard() {
-  const vehicleInfoCard = document.querySelector("[data-vehicle-info-card]");
-  const fields = document.querySelector("[data-plate-fields]");
-  if (!vehicleInfoCard || !fields) return;
-
-  const vehicles = bookedVehicles();
-  vehicleInfoCard.hidden = !vehicles.length;
-  fields.innerHTML = "";
-
-  vehicles.forEach((vehicle, index) => {
-    const required = plateIsRequired(vehicle);
-    const label = document.createElement("label");
-    label.innerHTML = `
-      <span>${t("plate")} — ${t("vehicle")} ${index + 1} (${vehicleLabel(vehicle)})${
-        required ? `<abbr class="required-marker" title="${t("required")}">*</abbr>` : ""
-      }</span>
-      <input type="text" data-plate autocomplete="off" placeholder="${currentLanguage === "is" ? "AB123" : "ABC123"}"
-        value="${vehicle.plate}" ${required ? "required aria-required='true'" : ""}>
-    `;
-    label.querySelector("input").addEventListener("input", (event) => {
-      vehicle.plate = event.target.value.trim().toUpperCase();
-      if (vehicle.plate) clearPlateError();
-      updateFlowSummary();
-    });
-    fields.appendChild(label);
-  });
-
-  if (!vehicles.some(plateIsRequired)) clearPlateError();
-}
-
-function clearPlateError() {
-  const error = document.querySelector("[data-plate-error]");
-  if (!error) return;
-  error.hidden = true;
-  error.textContent = "";
-}
-
-function validatePlate() {
-  const error = document.querySelector("[data-plate-error]");
-  const vehicles = bookedVehicles();
-  const missing = vehicles.findIndex((vehicle) => plateIsRequired(vehicle) && !vehicle.plate.trim());
-
-  if (validationBypassed() || missing === -1) {
-    clearPlateError();
-    return true;
-  }
-
-  if (error) {
-    error.textContent = t("plateRequiredError");
-    error.hidden = false;
-  }
-  document.querySelectorAll("[data-plate]")[missing]?.focus();
-  return false;
-}
-
 function setCheckoutStep(step) {
   currentStep = step;
   if (step === "information") {
     renderPassengerDetailFields();
-    syncVehicleInfoCard();
   }
   if (step === "payment") {
     renderOrderReviewDetails();
@@ -1321,7 +1245,7 @@ function setCheckoutStep(step) {
 }
 
 function validateInformation() {
-  return validatePanel("information") && validatePlate();
+  return validatePanel("information");
 }
 
 // Sailings are held against the capacity variables (party, vehicles, route, dates).
@@ -1434,8 +1358,7 @@ function syncTestingModeSwitch() {
 function validatePanel(step) {
   if (validationBypassed()) return true;
   const panel = document.querySelector(`[data-step-panel='${step}']`);
-  // The plate is reported by validatePlate() with its own inline message.
-  const invalid = [...panel.querySelectorAll("input[required]:not([data-plate])")]
+  const invalid = [...panel.querySelectorAll("input[required]")]
     .find((input) => !input.checkValidity());
   if (!invalid) return true;
   invalid.reportValidity();
@@ -1773,12 +1696,6 @@ function prefillSavedDetails() {
   const cardCvc = document.querySelector("[name='cardCvc']");
   if (cardCvc) cardCvc.value = "999";
 
-  bookedVehicles().filter(plateIsRequired).forEach((vehicle, index) => {
-    vehicle.plate = ["AB-123", "CD-456", "EF-789"][index] || "XX-000";
-  });
-  syncVehicleInfoCard();
-  clearPlateError();
-
   const termsCheckbox = document.querySelector("[name='termsAccepted']");
   if (termsCheckbox) termsCheckbox.checked = true;
 
@@ -1901,7 +1818,6 @@ document.querySelectorAll("[name='returnSailing']").forEach((input) => {
 document.querySelector("[data-testing-mode]")?.addEventListener("change", (event) => {
   if (event.target.checked) {
     localStorage.setItem("HERJOLFUR_SKIP_VALIDATION", "1");
-    clearPlateError();
   } else {
     localStorage.removeItem("HERJOLFUR_SKIP_VALIDATION");
   }
